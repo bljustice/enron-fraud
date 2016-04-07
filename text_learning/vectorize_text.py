@@ -39,13 +39,17 @@ temp_counter = 0
 
 for name, from_person in [("sara", from_sara), ("chris", from_chris)]:
     for path in from_person:
-        ### only look at first 200 emails when developing
-        ### once everything is working, remove this line to run over full dataset
-        temp_counter += 1
-        if temp_counter < 200:
-            path = os.path.join('..', path[:-1])
-            print path
-            email = open(path, "r")
+    ### only look at first 200 emails when developing
+    ### once everything is working, remove this line to run over full dataset
+        path = os.path.join('..', path[:-1])
+        print path
+        email = open(path, "r")
+        parsed_email = parseOutText(email).replace('sara','').replace('shackleton','').replace('chris','').replace('germani','').replace('sshacklensf','').replace('cgermannsf','')
+        word_data.append(parsed_email)
+        if name == 'sara':
+            from_data.append(0)
+        else:
+            from_data.append(1)
 
             ### use parseOutText to extract the text from the opened email
 
@@ -71,5 +75,8 @@ pickle.dump( from_data, open("your_email_authors.pkl", "w") )
 
 
 ### in Part 4, do TfIdf vectorization here
-
-
+from sklearn.feature_extraction.text import TfidfVectorizer
+t = TfidfVectorizer(stop_words="english")
+t.fit_transform(word_data)
+print len(t.get_feature_names())
+print t.get_feature_names()[34597]

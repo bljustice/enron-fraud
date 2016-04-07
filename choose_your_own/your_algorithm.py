@@ -27,9 +27,38 @@ plt.ylabel("grade")
 plt.show()
 ################################################################################
 
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.svm import SVC
+from sklearn.metrics import accuracy_score
+from sklearn.naive_bayes import GaussianNB
+from sklearn import tree
 
-### your code here!  name your classifier object clf if you want the 
-### visualization code (prettyPicture) to show you the decision boundary
+clf1 = AdaBoostClassifier(n_estimators=50)
+clf1.fit(features_train,labels_train)
+pred1 = clf1.predict(features_test)
+acc1 = accuracy_score(pred1,labels_test)
+print 'AdaBoost accuracy' + str(acc1)
+
+clf2 = SVC(kernel='rbf',C=20000)
+clf2.fit(features_train,labels_train)
+pred2 = clf2.predict(features_test)
+acc2 = accuracy_score(pred2,labels_test)
+print 'SVM accuracy:' + str(acc2)
+
+clf3 = GaussianNB()
+clf3.fit(features_train,labels_train)
+pred3= clf3.predict(features_test)
+acc3= accuracy_score(pred3,labels_test)
+print 'Naive Bayes accuracy' + str(acc3)
+
+clf4 = tree.DecisionTreeClassifier(min_samples_split=40)
+clf4.fit(features_train,labels_train)
+pred4 = clf4.predict(features_test)
+acc4 = accuracy_score(pred4,labels_test)
+print 'Decision Tree accuracy' + str(acc4)
+
+
+
 
 
 
