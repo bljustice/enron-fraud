@@ -5,6 +5,14 @@ from time import time
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
+from sklearn.naive_bayes import GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import tree
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.decomposition import PCA
+from sklearn.cross_validation import StratifiedShuffleSplit
+from sklearn.grid_search import GridSearchCV
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
@@ -54,16 +62,6 @@ labels, features = targetFeatureSplit(data)
 ### you'll need to use Pipelines. For more info:
 ### http://scikit-learn.org/stable/modules/pipeline.html
 # # Provided to give you a starting point. Try a variety of classifiers.
-from sklearn.naive_bayes import GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn import tree
-from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.decomposition import PCA
-from sklearn.metrics import recall_score,precision_score,f1_score,accuracy_score
-from sklearn.cross_validation import train_test_split,StratifiedShuffleSplit
-from sklearn.grid_search import GridSearchCV
-
 def build_classifier_list():
     clf_list = []
     rfc = RandomForestClassifier()
