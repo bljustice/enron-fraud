@@ -85,7 +85,7 @@ def build_classifier_list():
 def build_features():
     all_features = []
     pca = PCA()
-    pca_params = {'feat__n_components':range(1,11)}
+    pca_params = {'feat__n_components':range(1,6)}
     all_features.append((pca,pca_params))
     return all_features
 #
@@ -119,6 +119,7 @@ def build_grid_search(clf_list,feats):
                 best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_,recall,precision,f1))
             else:
                 pass
+    #Returns sorted list based on classifier F-score
     return sorted(best_estimators_scores,key=lambda estimator: estimator[4],reverse=True)
 
 clf = build_grid_search(build_classifier_list(),build_features())[0][0]
