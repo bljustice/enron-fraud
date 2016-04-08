@@ -61,7 +61,7 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
 from sklearn.metrics import recall_score,precision_score,f1_score,accuracy_score
-from sklearn.cross_validation import train_test_split
+from sklearn.cross_validation import train_test_split,StratifiedShuffleSplit
 from sklearn.grid_search import GridSearchCV
 
 def build_classifier_list():
@@ -99,8 +99,6 @@ def build_features():
 # # # # Example starting point. Try investigating other evaluation techniques!
 def build_grid_search(clf_list,feats):
     best_estimators_scores = []
-    features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
     for clf in clf_list:
         for feat in feats:
             t0 = time()
@@ -108,19 +106,11 @@ def build_grid_search(clf_list,feats):
             params.update(feat[1])
             params.update(clf[1])
             pipe = Pipeline([('feat',feat[0]),('classifier',clf[0])])
-            grid_search = GridSearchCV(pipe,param_grid=params)
-            grid_search.fit(features_train,labels_train)
-            pred = grid_search.predict(features_test)
-            recall = recall_score(labels_test,pred)
-            precision = precision_score(labels_test,pred)
-            f1 = f1_score(labels_test,pred)
-            t1 = time()-t0
-            if recall and precision >= .3:
-                best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_,recall,precision,f1))
-            else:
-                pass
+            grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,10,random_state=42),scoring='f1')
+            grid_search.fit(features,labels)
+            best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
     #Returns sorted list based on classifier F-score
-    return sorted(best_estimators_scores,key=lambda estimator: estimator[4],reverse=True)
+    return sorted(best_estimators_scores,key=lambda estimator: estimator[1],reverse=True)
 
 clf = build_grid_search(build_classifier_list(),build_features())[0][0]
 print build_grid_search(build_classifier_list(),build_features())
