@@ -1,4 +1,1 @@
-ud120-projects
-==============
-
-Starter project code for students taking Udacity ud120
+This project includes a Python machine learning classification system used to classify employees as fraudulent or not based on an Enron employee dataset. 
