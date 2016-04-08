@@ -11,6 +11,7 @@ from sklearn import tree
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.grid_search import GridSearchCV
 
@@ -85,8 +86,11 @@ def build_features():
     pca = PCA()
     pca_params = {'feat__n_components':range(1,6)}
     all_features.append((pca,pca_params))
+    min_max = MinMaxScaler()
+    min_max_params = {'feat__feature_range':[(0,1)]}
+    all_features.append((min_max,min_max_params))
     return all_features
-#
+
 # # # ### Task 5: Tune your classifier to achieve better than .3 precision and recall
 # # # ### using our testing script. Check the tester.py script in the final project
 # # # ### folder for details on the evaluation method, especially the test_classifier
