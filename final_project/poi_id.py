@@ -5,15 +5,21 @@ from time import time
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
+
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
+from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.pipeline import Pipeline
+
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
+
 from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.grid_search import GridSearchCV
+
+from sklearn.metrics import precision_score,recall_score
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
@@ -37,9 +43,11 @@ def create_new_features(data_dict):
             if from_messages != 'NaN' and from_poi != 'NaN' and to_poi != 'NaN':
                 v['to_poi_percentage'] = float(to_poi)/float(from_messages)
                 v['from_poi_percentage'] = float(from_poi)/float(to_messages)
+                v['total_poi_percentage'] = (float(to_poi)+float(from_poi))/(float(from_messages)+float(to_messages))
             else:
                 v['to_poi_percentage'] = 'NaN'
                 v['from_poi_percentage'] = 'NaN'
+                v['total_poi_percentage'] = 'NaN'
     return data_dict
 
 def define_features(data_dict):
@@ -63,17 +71,23 @@ labels, features = targetFeatureSplit(data)
 # # # Provided to give you a starting point. Try a variety of classifiers.
 def build_classifier_list():
     clf_list = []
+    rfc = RandomForestClassifier()
+    rfc_params = {'classifier__n_estimators':[1,2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
+    clf_list.append((rfc,rfc_params))
     dtree = tree.DecisionTreeClassifier()
-    dtree_params = {'classifier__n_estimators':range(1,11),'classifier__max_depth':range(1,11),'classifier__min_samples_split':range(1,11)}
+    dtree_params = {'classifier__n_estimators':[1,2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
     gnb_clf = GaussianNB()
     gnb_params = {}
     clf_list.append((gnb_clf,gnb_params))
     knn_clf = KNeighborsClassifier()
-    knn_params = {'classifier__n_neighbors':range(1,11),'classifier__weights':['uniform','distance']}
+    knn_params = {'classifier__n_neighbors':[1,2,3,5,15,20],'classifier__weights':['uniform','distance']}
     clf_list.append((knn_clf,knn_params))
     ada = AdaBoostClassifier()
-    ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':range(1,11)}
+    ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':[1,2,3,5,15,20,50,100]}
     clf_list.append((ada,ada_params))
+    svm = LinearSVC()
+    svm_params = {'classifier__C':[.5,1,5,10,100,1000]}
+    clf_list.append((svm,svm_params))
     return clf_list
 
 def build_scalers():
@@ -86,7 +100,7 @@ def build_scalers():
 def build_features():
     all_features = []
     pca = PCA()
-    pca_params = {'feat__n_components':range(1,6)}
+    pca_params = {'feat__n_components':[1,2,3,5,15,20,len(features_list)-1]}
     all_features.append((pca,pca_params))
     return all_features
 
@@ -107,7 +121,7 @@ def build_grid_search(clf_list,feats,scalers):
                 params.update(feat[1])
                 params.update(clf[1])
                 pipe = Pipeline([('scaler',scaler[0]),('feat',feat[0]),('classifier',clf[0])])
-                grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,5,random_state=42),scoring='f1')
+                grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,50,random_state=42),scoring='recall')
                 grid_search.fit(features,labels)
                 best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
     #Returns sorted list based on classifier F-score
