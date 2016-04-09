@@ -5,22 +5,16 @@ from time import time
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
-
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn import tree
 from sklearn.svm import LinearSVC
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.pipeline import Pipeline
-
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import MinMaxScaler
-
 from sklearn.cross_validation import StratifiedShuffleSplit
 from sklearn.grid_search import GridSearchCV
-
-from sklearn.metrics import precision_score,recall_score
-
 import math
 
 ### Load the dictionary containing the dataset
@@ -72,6 +66,7 @@ def define_features(data_dict):
     for key,value in v.items() if key != 'poi' and key != 'email_address'))
     features_list.insert(0,'poi')
     return features_list
+
 ### Store to my_dataset for easy export below.
 my_dataset = data_dict
 features_list = define_features(create_new_features(data_dict))
@@ -88,10 +83,10 @@ labels, features = targetFeatureSplit(data)
 ### Provided to give you a starting point. Try a variety of classifiers.
 def build_classifier_list():
     clf_list = []
-    rfc = RandomForestClassifier()
+    rfc_clf = RandomForestClassifier()
     rfc_params = {'classifier__n_estimators':[1,2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
     clf_list.append((rfc,rfc_params))
-    dtree = tree.DecisionTreeClassifier()
+    dtree_clf = tree.DecisionTreeClassifier()
     dtree_params = {'classifier__n_estimators':[1,2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
     gnb_clf = GaussianNB()
     gnb_params = {}
@@ -141,10 +136,10 @@ def build_grid_search(clf_list,feats,scalers):
                 grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,50,random_state=42),scoring='recall')
                 grid_search.fit(features,labels)
                 best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
-    #Returns sorted list based on classifier F-score
+    #Returns sorted list based on classifier recall score.
     return sorted(best_estimators_scores,key=lambda estimator: estimator[1],reverse=True)
+    
 clf = build_grid_search(build_classifier_list(),build_features(),build_scalers())[0][0]
-print clf
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
 ### that the version of poi_id.py that you submit can be run on its own and
