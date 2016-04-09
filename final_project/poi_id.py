@@ -85,21 +85,22 @@ def build_classifier_list():
     clf_list = []
     rfc_clf = RandomForestClassifier()
     rfc_params = {'classifier__n_estimators':[1,2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
-    clf_list.append((rfc,rfc_params))
+    clf_list.append((rfc_clf,rfc_params))
     dtree_clf = tree.DecisionTreeClassifier()
-    dtree_params = {'classifier__n_estimators':[1,2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
+    dtree_params = {'classifier__min_samples_split':[2,3,5,15,20],'classifier__max_features':['auto','log2','sqrt']}
+    clf_list.append((dtree_clf,dtree_params))
     gnb_clf = GaussianNB()
     gnb_params = {}
     clf_list.append((gnb_clf,gnb_params))
     knn_clf = KNeighborsClassifier()
     knn_params = {'classifier__n_neighbors':[1,2,3,5,15,20],'classifier__weights':['uniform','distance']}
     clf_list.append((knn_clf,knn_params))
-    ada = AdaBoostClassifier()
+    ada_clf = AdaBoostClassifier()
     ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':[1,2,3,5,15,20,50,100]}
-    clf_list.append((ada,ada_params))
-    svm = LinearSVC()
+    clf_list.append((ada_clf,ada_params))
+    svm_clf = LinearSVC()
     svm_params = {'classifier__C':[.5,1,5,10,100,1000]}
-    clf_list.append((svm,svm_params))
+    clf_list.append((svm_clf,svm_params))
     return clf_list
 
 def build_scalers():
@@ -138,7 +139,7 @@ def build_grid_search(clf_list,feats,scalers):
                 best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
     #Returns sorted list based on classifier recall score.
     return sorted(best_estimators_scores,key=lambda estimator: estimator[1],reverse=True)
-    
+
 clf = build_grid_search(build_classifier_list(),build_features(),build_scalers())[0][0]
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
