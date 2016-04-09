@@ -76,14 +76,18 @@ def build_classifier_list():
     clf_list.append((ada,ada_params))
     return clf_list
 
+def build_scalers():
+    all_scalers = []
+    min_max = MinMaxScaler()
+    min_max_params = {'scaler__feature_range':[(0,1)]}
+    all_scalers.append((min_max,min_max_params))
+    return all_scalers
+
 def build_features():
     all_features = []
     pca = PCA()
     pca_params = {'feat__n_components':range(1,6)}
     all_features.append((pca,pca_params))
-    min_max = MinMaxScaler()
-    min_max_params = {'feat__feature_range':[(0,1)]}
-    all_features.append((min_max,min_max_params))
     return all_features
 
 # # # # ### Task 5: Tune your classifier to achieve better than .3 precision and recall
@@ -93,25 +97,25 @@ def build_features():
 # # # # ### stratified shuffle split cross validation. For more info:
 # # # # ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
 # # # # # Example starting point. Try investigating other evaluation techniques!
-def build_grid_search(clf_list,feats):
+def build_grid_search(clf_list,feats,scalers):
     best_estimators_scores = []
     for clf in clf_list:
-        for feat in feats:
-            t0 = time()
-            params = {}
-            params.update(feat[1])
-            params.update(clf[1])
-            pipe = Pipeline([('feat',feat[0]),('classifier',clf[0])])
-            grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,275,random_state=42),scoring='f1')
-            grid_search.fit(features,labels)
-            best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
+        for scaler in scalers:
+            for feat in feats:
+                params = {}
+                params.update(scaler[1])
+                params.update(feat[1])
+                params.update(clf[1])
+                pipe = Pipeline([('scaler',scaler[0]),('feat',feat[0]),('classifier',clf[0])])
+                grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,5,random_state=42),scoring='f1')
+                grid_search.fit(features,labels)
+                best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
     #Returns sorted list based on classifier F-score
     return sorted(best_estimators_scores,key=lambda estimator: estimator[1],reverse=True)
-
-clf = build_grid_search(build_classifier_list(),build_features())[0][0]
+clf = build_grid_search(build_classifier_list(),build_features(),build_scalers())[0][0]
 print clf
-# # # ### Task 6: Dump your classifier, dataset, and features_list so anyone can
-# # # ### check your results. You do not need to change anything below, but make sure
-# # # ### that the version of poi_id.py that you submit can be run on its own and
-# # # ### generates the necessary .pkl files for validating your results.
+# # # # ### Task 6: Dump your classifier, dataset, and features_list so anyone can
+# # # # ### check your results. You do not need to change anything below, but make sure
+# # # # ### that the version of poi_id.py that you submit can be run on its own and
+# # # # ### generates the necessary .pkl files for validating your results.
 dump_classifier_and_data(clf, my_dataset, features_list)
