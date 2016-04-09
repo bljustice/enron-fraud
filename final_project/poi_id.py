@@ -33,9 +33,6 @@ def create_new_features(data_dict):
             from_poi = v['from_poi_to_this_person']
             to_poi = v['from_this_person_to_poi']
             to_messages = v['to_messages']
-            salary = v['salary']
-            stock = v['total_stock_value']
-            bonus = v['bonus']
             if from_messages != 'NaN' and from_poi != 'NaN' and to_poi != 'NaN':
                 v['to_poi_percentage'] = float(to_poi)/float(from_messages)
                 v['from_poi_percentage'] = float(from_poi)/float(to_messages)
@@ -77,7 +74,7 @@ def build_classifier_list():
     knn_params = {'classifier__n_neighbors':range(1,16),'classifier__weights':['uniform','distance']}
     clf_list.append((knn_clf,knn_params))
     ada = AdaBoostClassifier()
-    ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':range(1,11)}
+    ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':range(1,6)}
     clf_list.append((ada,ada_params))
     return clf_list
 
@@ -108,14 +105,14 @@ def build_grid_search(clf_list,feats):
             params.update(feat[1])
             params.update(clf[1])
             pipe = Pipeline([('feat',feat[0]),('classifier',clf[0])])
-            grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,10,random_state=42),scoring='f1')
+            grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,100,random_state=42),scoring='f1')
             grid_search.fit(features,labels)
             best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
     #Returns sorted list based on classifier F-score
     return sorted(best_estimators_scores,key=lambda estimator: estimator[1],reverse=True)
 
 clf = build_grid_search(build_classifier_list(),build_features())[0][0]
-print build_grid_search(build_classifier_list(),build_features())
+print clf
 #
 # # ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 # # ### check your results. You do not need to change anything below, but make sure
