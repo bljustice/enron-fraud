@@ -24,7 +24,8 @@ with open("final_project_dataset.pkl", "r") as data_file:
 ### The first feature must be "poi".
 ### Task 2: Remove outliers
 data_dict.pop('TOTAL',0)
-### Task 3: Create new feature(s)
+data_dict.pop('THE TRAVEL AGENCY IN THE PARK',0)
+# ### Task 3: Create new feature(s)
 def create_new_features(data_dict):
     from_to_poi_ratios = []
     for k,v in data_dict.items():
@@ -50,31 +51,28 @@ def define_features(data_dict):
 my_dataset = data_dict
 features_list = define_features(create_new_features(data_dict))
 
-### Extract features and labels from dataset for local testing
+# ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
-# # Provided to give you a starting point. Try a variety of classifiers.
+# ### Task 4: Try a varity of classifiers
+# ### Please name your classifier clf for easy export below.
+# ### Note that if you want to do PCA or other multi-stage operations,
+# ### you'll need to use Pipelines. For more info:
+# ### http://scikit-learn.org/stable/modules/pipeline.html
+# # # Provided to give you a starting point. Try a variety of classifiers.
 def build_classifier_list():
     clf_list = []
-    rfc = RandomForestClassifier()
-    rfc_params = {'classifier__n_estimators':range(1,6),'classifier__max_depth':range(1,6),'classifier__min_samples_split':range(1,6)}
-    clf_list.append((rfc,rfc_params))
     dtree = tree.DecisionTreeClassifier()
-    dtree_params = {'classifier__n_estimators':range(1,6),'classifier__max_depth':range(1,6),'classifier__min_samples_split':range(1,6)}
+    dtree_params = {'classifier__n_estimators':range(1,11),'classifier__max_depth':range(1,11),'classifier__min_samples_split':range(1,11)}
     gnb_clf = GaussianNB()
     gnb_params = {}
     clf_list.append((gnb_clf,gnb_params))
     knn_clf = KNeighborsClassifier()
-    knn_params = {'classifier__n_neighbors':range(1,16),'classifier__weights':['uniform','distance']}
+    knn_params = {'classifier__n_neighbors':range(1,11),'classifier__weights':['uniform','distance']}
     clf_list.append((knn_clf,knn_params))
     ada = AdaBoostClassifier()
-    ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':range(1,6)}
+    ada_params = {'classifier__base_estimator':[tree.DecisionTreeClassifier()],'classifier__n_estimators':range(1,11)}
     clf_list.append((ada,ada_params))
     return clf_list
 
@@ -88,14 +86,13 @@ def build_features():
     all_features.append((min_max,min_max_params))
     return all_features
 
-# # # ### Task 5: Tune your classifier to achieve better than .3 precision and recall
-# # # ### using our testing script. Check the tester.py script in the final project
-# # # ### folder for details on the evaluation method, especially the test_classifier
-# # # ### function. Because of the small size of the dataset, the script uses
-# # # ### stratified shuffle split cross validation. For more info:
-# # # ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
-# # #
-# # # # Example starting point. Try investigating other evaluation techniques!
+# # # # ### Task 5: Tune your classifier to achieve better than .3 precision and recall
+# # # # ### using our testing script. Check the tester.py script in the final project
+# # # # ### folder for details on the evaluation method, especially the test_classifier
+# # # # ### function. Because of the small size of the dataset, the script uses
+# # # # ### stratified shuffle split cross validation. For more info:
+# # # # ### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
+# # # # # Example starting point. Try investigating other evaluation techniques!
 def build_grid_search(clf_list,feats):
     best_estimators_scores = []
     for clf in clf_list:
@@ -105,7 +102,7 @@ def build_grid_search(clf_list,feats):
             params.update(feat[1])
             params.update(clf[1])
             pipe = Pipeline([('feat',feat[0]),('classifier',clf[0])])
-            grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,100,random_state=42),scoring='f1')
+            grid_search = GridSearchCV(pipe,param_grid=params,cv=StratifiedShuffleSplit(labels,275,random_state=42),scoring='f1')
             grid_search.fit(features,labels)
             best_estimators_scores.append((grid_search.best_estimator_,grid_search.best_score_))
     #Returns sorted list based on classifier F-score
@@ -113,10 +110,8 @@ def build_grid_search(clf_list,feats):
 
 clf = build_grid_search(build_classifier_list(),build_features())[0][0]
 print clf
-#
-# # ### Task 6: Dump your classifier, dataset, and features_list so anyone can
-# # ### check your results. You do not need to change anything below, but make sure
-# # ### that the version of poi_id.py that you submit can be run on its own and
-# # ### generates the necessary .pkl files for validating your results.
-# #
+# # # ### Task 6: Dump your classifier, dataset, and features_list so anyone can
+# # # ### check your results. You do not need to change anything below, but make sure
+# # # ### that the version of poi_id.py that you submit can be run on its own and
+# # # ### generates the necessary .pkl files for validating your results.
 dump_classifier_and_data(clf, my_dataset, features_list)
