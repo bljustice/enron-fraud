@@ -34,7 +34,7 @@
   - AdaBoost
   - Linear SVM
 
-When I first started testing, I used Grid Search cross-validation with the highest resulting F1 score for selecting the best algorithm. Precision score was quite high for each algorithm, especially with Gaussian Naive Bayes and Random Forest classification, however recall was never above approximately 28%.  Because of this, I chose to choose the best algorithm based on recall as the scoring metric. As a result, K Nearest Neighbors ended up being the most optimal algorithm. Below is the final pipeline that was chosen:
+  When I first started testing, I used Grid Search cross-validation with the highest resulting F1 score for selecting the best algorithm. Precision score was quite high for each algorithm, especially with Gaussian Naive Bayes and Random Forest classification, however recall was never above approximately 28%.  Because of this, I chose to choose the best algorithm based on recall as the scoring metric. As a result, K Nearest Neighbors ended up being the most optimal algorithm. Below is the final pipeline that was chosen:
 
   ```python
   Pipeline(steps=[('scaler', MinMaxScaler(copy=True, feature_range=(0, 1))), ('feat', PCA(copy=True, n_components=2, whiten=False)), ('classifier', KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
