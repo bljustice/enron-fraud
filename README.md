@@ -5,6 +5,7 @@
 2. I used all of the features in the dataset except for each person’s email address.. I also created the following new features for the dataset based on existing features.
 
 **Email Based Features**
+
 | Feature Name | Description |
 | ------------- | ------------- |
 | to_poi_percentage  | The percentage of emails the person sent to a POI  |
@@ -15,9 +16,11 @@
 I created the variables above because I thought that most fraudulent employees would be communicating between one another more frequently than to non-fraudulent employees.
 
 **Financial Based Features**
+
 | Feature Name | Description |
-| total_employee_worth | The sum of a person’s salary, bonus, and total stock value
-| log_total_employee_worth | The log based transformation of the total_employee_worth variable
+| ------------- | ------------- |
+| total_employee_worth | The sum of a person’s salary, bonus, and total stock value |
+| log_total_employee_worth | The log based transformation of the total_employee_worth variable |
 
 I created these variables based on assumptions known about why Enron eventually went bankrupt and had so many fraudulent employees. I thought that fraudulent employees would most likely have higher sums of financial value than non-fraudulent employees, so I created the total_employee worth variable. I also transformed it using a natural log to see how much it would help the overall success of my classification system. Turns out it helped quite a bit along with the square root of the total_poi_percentage feature above. After running PCA, found that 2 of the features explained approximately 21% of the variance in the dataset, so I decided to limit the number of features to 5 initially. However, to be sure, I included a few other number of components in my final model to make sure I didn’t hinder its performance. Finally I decided to include feature scaling (using MinMaxScaler) in my classification Pipeline after PCA alone wasn’t yielding very high results. This helped improve precision and recall scores significantly.
 
