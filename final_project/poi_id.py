@@ -141,6 +141,7 @@ def build_grid_search(clf_list,feats,scalers):
     return sorted(best_estimators_scores,key=lambda estimator: estimator[1],reverse=True)
 
 clf = build_grid_search(build_classifier_list(),build_features(),build_scalers())[0][0]
+
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
 ### that the version of poi_id.py that you submit can be run on its own and
