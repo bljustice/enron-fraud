@@ -27,7 +27,8 @@ with open("final_project_dataset.pkl", "r") as data_file:
 ### Task 2: Remove outliers
 data_dict.pop('TOTAL',0)
 data_dict.pop('THE TRAVEL AGENCY IN THE PARK',0)
-# ### Task 3: Create new feature(s)
+
+### Task 3: Create new feature(s)
 def create_new_features(data_dict):
     from_to_poi_ratios = []
     for k,v in data_dict.items():
