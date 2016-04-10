@@ -1,4 +1,5 @@
 #Udacity Project 5 - Intro to Machine Learning Project
+##Identify Fraud from Enron Email
 
 1. This project is based on using supervised machine learning to predict if certain employees at Enron are fraudulent or not. The Enron dataset provided is a Python dictionary, which top-level keys are employee’s names. The value for that key is another dictionary, which contains several different features about the employee, such as their salary, total stock value, number of emails to and from them, and many others. Many of the feature fields are incomplete in this dataset and include values such as ‘NaN’ or NoneType Python objects. I found 2 outliers while doing analysis. One is ‘TOTAL’, which appears to be all of the datasets features combined together into one Python dictionary. The other is something that appears to be an organization called ‘THE TRAVEL AGENCY IN THE PARK’. I removed both of these from the dataset to avoid skewing my classification system’s results.
 
