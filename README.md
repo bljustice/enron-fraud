@@ -48,7 +48,7 @@
 
 6. Below are the metrics of my classification model using tester.py.
 
-  | Evaluation Metric (rounded) | Score |
+  | Evaluation Metric | Score (rounded) |
   | ------------- | ------------- |
   | Accuracy | .89 |
   | Precision | .61 |
