@@ -27,12 +27,12 @@ I created these variables based on assumptions known about why Enron eventually 
 
 3. My classification system is built with a sklearn pipeline, starting with feature scaling, then PCA, then a classifier. Grid search cross validation was used to tune parameters for each step of the pipeline. Below are the classification algorithms I tried:
 
-- Random Forest
-- Decision Tree
-- Gaussian Naive-Bayes
-- K Nearest Neighbors
-- AdaBoost
-- Linear SVM
+  - Random Forest
+  - Decision Tree
+  - Gaussian Naive-Bayes
+  - K Nearest Neighbors
+  - AdaBoost
+  - Linear SVM
 
 When I first started testing, I used Grid Search cross-validation with the highest resulting F1 score for selecting the best algorithm. Precision score was quite high for each algorithm, especially with Gaussian Naive Bayes and Random Forest classification, however recall was never above approximately 28%.  Because of this, I chose to choose the best algorithm based on recall as the scoring metric. As a result, K Nearest Neighbors ended up being the most optimal algorithm. Below is the final pipeline that was chosen:
 
