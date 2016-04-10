@@ -4,17 +4,17 @@
 
 2. I used all of the features in the dataset except for each person’s email address.. I also created the following new features for the dataset based on existing features.
 
-Email Based Features
+**Email Based Features**
 | Feature Name | Description |
 | ------------- | ------------- |
 | to_poi_percentage  | The percentage of emails the person sent to a POI  |
 | from_poi_percentage | The percentage of emails from a POI to a particular person |
 | total_poi_percentage | The percentage of total emails from a POI and to a POI from a particular person |
-| sqrt_total_poi_percentage | The square root value of the total_poi_percentage value
+| sqrt_total_poi_percentage | The square root value of the total_poi_percentage value |
 
 I created the variables above because I thought that most fraudulent employees would be communicating between one another more frequently than to non-fraudulent employees.
 
-Financial Based Features
+**Financial Based Features**
 | Feature Name | Description |
 | total_employee_worth | The sum of a person’s salary, bonus, and total stock value
 | log_total_employee_worth | The log based transformation of the total_employee_worth variable
@@ -31,11 +31,12 @@ I created these variables based on assumptions known about why Enron eventually 
 - Linear SVM
 
 When I first started testing, I used Grid Search cross-validation with the highest resulting F1 score for selecting the best algorithm. Precision score was quite high for each algorithm, especially with Gaussian Naive Bayes and Random Forest classification, however recall was never above approximately 28%.  Because of this, I chose to choose the best algorithm based on recall as the scoring metric. As a result, K Nearest Neighbors ended up being the most optimal algorithm. Below is the final pipeline that was chosen:
-```Python
+
+```python
 Pipeline(steps=[('scaler', MinMaxScaler(copy=True, feature_range=(0, 1))), ('feat', PCA(copy=True, n_components=2, whiten=False)), ('classifier', KNeighborsClassifier(algorithm='auto', leaf_size=30, metric='minkowski',
            metric_params=None, n_jobs=1, n_neighbors=1, p=2,
            weights='uniform'))])
-           ```
+```
 
 4. Many machine learning algorithms have parameters that can be tuned to optimize the classification success of the algorithm. These parameters tend to be used to find a middle-ground between under and overfitting a classification model to a dataset. If tuning of these parameters is not done well, a model can be very variated when trying to predict new data, or highly biased, meaning that it basically ignores new data features being used for prediction. For my classification system, I chose to use grid search cross-validation to exhaustively search a list of particular parameters for each pipeline I created.
 
