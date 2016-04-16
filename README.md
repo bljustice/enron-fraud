@@ -7,7 +7,7 @@
 
   1. Feature scaling using MinMaxScaler
   2. PCA on scaled features
-  3. Machine learning algorithm
+  3. Classification algorithm
 
   Grid search cross validation is used to tune the parameters of each step of each pipeline created. Once each parameter combination has been fitted and tested, my model returns the highest scoring pipeline based on the score type set in Grid Search CV. Originally I used F1 score as the score type, but switched to recall in later testing phases. The reason for changing this is explained later in section 3 of this report. Due to this type of setup, different pipelines can be returned when updates are made to the model, such as features being added or removed, and tuning parameters being adjusted. This is why different pipelines are shown below when new features are added to the model.
 
