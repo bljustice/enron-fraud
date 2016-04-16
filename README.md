@@ -40,7 +40,6 @@
   ```python
   Pipeline(steps=[('feat', PCA(copy=True, n_components=2, whiten=False)), ('classifier', GaussianNB())])
   ```
-  Below are the results of this pipeline
 
   | Evaluation Metric | Score (rounded) |
   | ------------- | ------------- |
@@ -82,9 +81,9 @@
   | Recall | .33 |
   | F1 | .33 |
 
-  As seen above, my model selected a different pipeline based on adding these new features. This new pipeline actually lowered the F1 and precision scores, but increased the recall score slightly. This pipeline met specifications, however I wanted to see if I could make an even better model. I decided to scale the dataset's features using MinMaxScaler, add all of the self-engineered features above, and switch my algorithm to use recall score as the deciding factor for choosing the most optimal pipeline. I also updated the PCA step of my pipeline to possibly include a larger range of components to make sure I wasn't hindering overall performance. I used a random number of components between 1 and the total number of features being selected in my original feature list, with Grid Search CV to test each number of principal components in each pipeline created. Below are the model's scores using tester.py with scaled features, all the new features I created plus the original ones used, the larger component range, and scoring based on recall score. With these updates, it found K-Nearest Neighbors to be the best classification algorithm with two principal components. The final pipeline chosen by my model based on these updates has been provided in section 3 of this report and its evaluation metrics in section 6.
+  As seen above, my model selected a different pipeline based on adding these new features. This new pipeline actually lowered the F1 and precision scores, but increased the recall score slightly. This pipeline met specifications, however I wanted to see if I could make an even better model. I decided to scale the dataset's features using MinMaxScaler, add all of the self-engineered features above, and switch my algorithm to use recall score as the deciding factor for choosing the most optimal pipeline. I also updated the PCA step of my pipeline to possibly include a larger range of components to make sure I wasn't hindering overall performance. I used a random number of components between 1 and the total number of features being selected in my original feature list, with Grid Search CV to test each number of principal components in each pipeline created. With these updates, it found K-Nearest Neighbors to be the best classification algorithm with two principal components. The final pipeline chosen by my model based on these updates has been provided in section 3 of this report and its evaluation metrics in section 6.
 
-3. As stated in section 2, my final classification model builds multiple sklearn pipelines, starting with feature scaling, then PCA, then a classifier. Once a pipeline is built, it's parameters are tuned using Grid Search cross validation to find optimal performance based on the scoring method selected. Below are the classification algorithms I tried:
+3. As stated in section 2, my final classification model builds multiple sklearn pipelines, starting with feature scaling, then PCA, then a classifier. Once a pipeline is built, it's parameters are tuned using Grid Search CV to find optimal performance based on the scoring method selected. Below are the classification algorithms I tried:
 
   - Random Forest
   - Decision Tree
